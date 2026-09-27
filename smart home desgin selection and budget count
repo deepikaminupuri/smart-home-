@@ -1,0 +1,2862 @@
+output:file:///C:/Users/MINUPURI%20DEEPIKA/OneDrive/Desktop/python/di.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Smart Home Designer</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#f4f6f8;
+    color:#222;
+}
+
+header{
+    background:linear-gradient(135deg,#5b21b6,#7c3aed,#9333ea);
+    color:white;
+    padding:35px 20px;
+    text-align:center;
+}
+
+header h1{
+    margin:0;
+    font-size:38px;
+}
+
+header p{
+    margin-top:10px;
+    font-size:17px;
+}
+
+.container{
+    width:95%;
+    max-width:1300px;
+    margin:30px auto;
+}
+
+.card{
+    background:white;
+    border-radius:18px;
+    padding:25px;
+    margin-bottom:25px;
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+}
+
+h2{
+    margin-top:0;
+    color:#4c1d95;
+}
+
+h3{
+    color:#5b21b6;
+}
+
+/* UPLOAD */
+
+.upload-box{
+    border:2px dashed #8b5cf6;
+    padding:30px;
+    text-align:center;
+    border-radius:15px;
+    background:#faf7ff;
+}
+
+input[type=file]{
+    margin-top:15px;
+}
+
+#planPreview{
+    max-width:100%;
+    max-height:350px;
+    margin-top:20px;
+    border-radius:12px;
+    display:none;
+}
+
+/* ROOM */
+
+.room-grid,
+.style-grid,
+.budget-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+    gap:15px;
+}
+
+.select-card{
+    border:2px solid #ddd;
+    border-radius:15px;
+    padding:18px 10px;
+    text-align:center;
+    cursor:pointer;
+    transition:.25s;
+    background:white;
+}
+
+.select-card:hover{
+    transform:translateY(-4px);
+    border-color:#8b5cf6;
+}
+
+.select-card.active{
+    border-color:#6d28d9;
+    background:#f3e8ff;
+    box-shadow:0 5px 15px rgba(109,40,217,.2);
+}
+
+.select-card .icon{
+    font-size:35px;
+    display:block;
+    margin-bottom:8px;
+}
+
+/* BUDGET */
+
+.budget-card{
+    cursor:pointer;
+    border:2px solid #ddd;
+    border-radius:15px;
+    padding:18px;
+    text-align:center;
+    background:white;
+}
+
+.budget-card.active{
+    background:#ede9fe;
+    border-color:#7c3aed;
+}
+
+.budget-card strong{
+    display:block;
+    font-size:21px;
+    color:#5b21b6;
+}
+
+.budget-card small{
+    display:block;
+    margin-top:6px;
+    color:#666;
+}
+
+/* BUTTON */
+
+button{
+    border:none;
+    padding:15px 28px;
+    border-radius:12px;
+    background:linear-gradient(135deg,#6d28d9,#9333ea);
+    color:white;
+    font-size:17px;
+    cursor:pointer;
+}
+
+button:hover{
+    transform:translateY(-2px);
+}
+
+/* RESULT */
+
+#result{
+    display:none;
+}
+
+.summary-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:15px;
+}
+
+.summary-box{
+    padding:20px;
+    border-radius:14px;
+    background:#f5f3ff;
+}
+
+.summary-box strong{
+    display:block;
+    color:#5b21b6;
+    margin-bottom:8px;
+}
+
+/* BUDGET BAR */
+
+.budget-bar{
+    height:25px;
+    background:#e5e7eb;
+    border-radius:20px;
+    overflow:hidden;
+    margin:15px 0;
+}
+
+.budget-fill{
+    height:100%;
+    background:linear-gradient(90deg,#7c3aed,#c026d3);
+    width:0;
+    transition:1s;
+}
+
+/* ITEMS */
+
+.item-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:18px;
+}
+
+.item-card{
+    background:white;
+    border:1px solid #ddd;
+    border-radius:16px;
+    overflow:hidden;
+    box-shadow:0 4px 15px rgba(0,0,0,.07);
+}
+
+.item-image{
+    height:150px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:70px;
+    background:linear-gradient(135deg,#f5f3ff,#fafafa);
+}
+
+.item-info{
+    padding:16px;
+}
+
+.item-info h4{
+    margin:0 0 8px;
+}
+
+.item-info p{
+    margin:5px 0;
+    color:#666;
+}
+
+.price{
+    font-weight:bold;
+    color:#6d28d9;
+    font-size:18px;
+}
+
+/* ROOM PREVIEW */
+
+.room-preview{
+    position:relative;
+    width:100%;
+    height:600px;
+    overflow:hidden;
+    border-radius:20px;
+    background:#ddd;
+    box-shadow:0 10px 35px rgba(0,0,0,.18);
+}
+
+.wall{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:70%;
+    background:#eee;
+}
+
+.floor{
+    position:absolute;
+    bottom:0;
+    left:0;
+    width:100%;
+    height:30%;
+    background:
+    repeating-linear-gradient(
+        90deg,
+        #b58b61 0px,
+        #b58b61 70px,
+        #c99e73 71px,
+        #c99e73 140px
+    );
+}
+
+.window{
+    position:absolute;
+    top:70px;
+    left:45%;
+    width:170px;
+    height:130px;
+    background:#8fd3ff;
+    border:10px solid #fff;
+    box-shadow:0 5px 15px rgba(0,0,0,.2);
+}
+
+.curtain{
+    position:absolute;
+    top:50px;
+    width:60px;
+    height:170px;
+    background:#7c3aed;
+}
+
+.curtain.left{
+    left:39%;
+}
+
+.curtain.right{
+    left:calc(45% + 170px);
+}
+
+.wall-art{
+    position:absolute;
+    top:70px;
+    right:100px;
+    width:90px;
+    height:110px;
+    background:#fff;
+    border:8px solid #6b4f35;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:35px;
+}
+
+.rug{
+    position:absolute;
+    bottom:45px;
+    left:30%;
+    width:40%;
+    height:100px;
+    background:#8b5cf6;
+    border-radius:50%;
+}
+
+.furniture{
+    position:absolute;
+    z-index:5;
+}
+
+.sofa{
+    left:12%;
+    bottom:90px;
+    width:300px;
+    height:130px;
+    background:#777;
+    border-radius:25px 25px 10px 10px;
+}
+
+.sofa:before{
+    content:"";
+    position:absolute;
+    top:-45px;
+    left:20px;
+    width:260px;
+    height:70px;
+    background:#888;
+    border-radius:25px;
+}
+
+.table{
+    left:42%;
+    bottom:90px;
+    width:160px;
+    height:55px;
+    background:#7b4f2c;
+    border-radius:50%;
+}
+
+.table:after{
+    content:"";
+    position:absolute;
+    top:50px;
+    left:70px;
+    width:20px;
+    height:70px;
+    background:#54351d;
+}
+
+.tv-unit{
+    right:10%;
+    bottom:95px;
+    width:250px;
+    height:90px;
+    background:#54351d;
+}
+
+.tv{
+    position:absolute;
+    right:12%;
+    bottom:185px;
+    width:220px;
+    height:130px;
+    background:#111;
+    border:7px solid #333;
+}
+
+/* BEDROOM */
+
+.bed{
+    left:15%;
+    bottom:90px;
+    width:420px;
+    height:170px;
+    background:#8b5e3c;
+    border-radius:15px 15px 5px 5px;
+}
+
+.mattress{
+    position:absolute;
+    top:-30px;
+    left:15px;
+    width:390px;
+    height:55px;
+    background:white;
+    border-radius:12px;
+}
+
+.pillow{
+    position:absolute;
+    top:-15px;
+    width:100px;
+    height:40px;
+    background:#ddd;
+    border-radius:12px;
+}
+
+.pillow.one{
+    left:50px;
+}
+
+.pillow.two{
+    left:180px;
+}
+
+.wardrobe{
+    right:8%;
+    bottom:80px;
+    width:210px;
+    height:300px;
+    background:#c9a77d;
+    border:8px solid #8b5e3c;
+}
+
+.side-table{
+    left:3%;
+    bottom:80px;
+    width:100px;
+    height:100px;
+    background:#8b5e3c;
+}
+
+/* KITCHEN */
+
+.kitchen-counter{
+    left:5%;
+    right:5%;
+    bottom:85px;
+    height:130px;
+    background:#8c6239;
+}
+
+.kitchen-cabinet{
+    position:absolute;
+    top:-170px;
+    width:170px;
+    height:160px;
+    background:#d6b48a;
+    border:5px solid #8c6239;
+}
+
+.kitchen-cabinet.one{
+    left:30px;
+}
+
+.kitchen-cabinet.two{
+    left:220px;
+}
+
+.kitchen-cabinet.three{
+    right:30px;
+}
+
+.fridge{
+    right:8%;
+    bottom:80px;
+    width:120px;
+    height:300px;
+    background:#ddd;
+    border-radius:8px;
+}
+
+/* BATHROOM */
+
+.bath{
+    left:20%;
+    bottom:75px;
+    width:180px;
+    height:100px;
+    background:white;
+    border-radius:50px;
+    border:5px solid #aaa;
+}
+
+.basin{
+    right:25%;
+    bottom:150px;
+    width:150px;
+    height:80px;
+    background:white;
+    border-radius:15px;
+    border:5px solid #bbb;
+}
+
+.mirror{
+    right:26%;
+    bottom:245px;
+    width:130px;
+    height:120px;
+    background:#8fd3ff;
+    border:8px solid white;
+}
+
+/* DINING */
+
+.dining-table{
+    left:25%;
+    bottom:100px;
+    width:420px;
+    height:100px;
+    background:#8b5e3c;
+    border-radius:20px;
+}
+
+.chair{
+    position:absolute;
+    width:90px;
+    height:120px;
+    background:#7b4f2c;
+}
+
+.chair.c1{
+    left:20%;
+    bottom:60px;
+}
+
+.chair.c2{
+    left:52%;
+    bottom:60px;
+}
+
+.chair.c3{
+    left:20%;
+    bottom:250px;
+}
+
+.chair.c4{
+    left:52%;
+    bottom:250px;
+}
+
+/* BALCONY */
+
+.plant{
+    position:absolute;
+    bottom:55px;
+    width:80px;
+    height:100px;
+    background:#3f7d3c;
+    border-radius:50%;
+}
+
+.plant.p1{
+    left:8%;
+}
+
+.plant.p2{
+    right:12%;
+}
+
+.balcony-chair{
+    position:absolute;
+    left:35%;
+    bottom:60px;
+    width:130px;
+    height:130px;
+    background:#d6b48a;
+    border-radius:20px;
+}
+
+/* POOJA */
+
+.pooja-unit{
+    left:25%;
+    bottom:60px;
+    width:50%;
+    height:300px;
+    background:#a97842;
+    border-radius:15px;
+}
+
+.diya{
+    position:absolute;
+    left:48%;
+    bottom:230px;
+    font-size:60px;
+}
+
+/* OFFICE */
+
+.office-desk{
+    left:15%;
+    bottom:100px;
+    width:500px;
+    height:100px;
+    background:#8b5e3c;
+}
+
+.office-chair{
+    left:32%;
+    bottom:10px;
+    width:130px;
+    height:150px;
+    background:#555;
+    border-radius:30px;
+}
+
+.monitor{
+    left:35%;
+    bottom:200px;
+    width:220px;
+    height:130px;
+    background:#111;
+    border:10px solid #444;
+}
+
+/* CUSTOMER SUMMARY */
+
+.customer-box{
+    background:linear-gradient(135deg,#f5f3ff,#faf5ff);
+    padding:25px;
+    border-radius:18px;
+    border-left:6px solid #7c3aed;
+}
+
+.customer-box li{
+    margin:10px 0;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:700px){
+
+    header h1{
+        font-size:28px;
+    }
+
+    .room-preview{
+        height:450px;
+    }
+
+    .sofa{
+        width:220px;
+        height:100px;
+    }
+
+    .bed{
+        width:280px;
+    }
+
+    .mattress{
+        width:250px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+<h1>🏠 Smart Home Designer</h1>
+
+<p>
+Design your room according to your room type, style and exact budget
+</p>
+
+</header>
+
+
+<div class="container">
+
+
+<!-- HOUSE PLAN -->
+
+<div class="card">
+
+<h2>📐 1. Upload House Plan</h2>
+
+<div class="upload-box">
+
+<p>
+Upload your house plan/floor plan
+</p>
+
+<input type="file" id="planInput" accept="image/*">
+
+<br>
+
+<img id="planPreview">
+
+</div>
+
+</div>
+
+
+<!-- ROOM -->
+
+<div class="card">
+
+<h2>🛋️ 2. Select Room</h2>
+
+<div class="room-grid">
+
+<div class="select-card active" data-room="living">
+<span class="icon">🛋️</span>
+Living Room
+</div>
+
+<div class="select-card" data-room="bedroom">
+<span class="icon">🛏️</span>
+Bedroom
+</div>
+
+<div class="select-card" data-room="kitchen">
+<span class="icon">🍳</span>
+Kitchen
+</div>
+
+<div class="select-card" data-room="bathroom">
+<span class="icon">🚿</span>
+Bathroom
+</div>
+
+<div class="select-card" data-room="dining">
+<span class="icon">🍽️</span>
+Dining Room
+</div>
+
+<div class="select-card" data-room="balcony">
+<span class="icon">🌿</span>
+Balcony
+</div>
+
+<div class="select-card" data-room="pooja">
+<span class="icon">🪔</span>
+Pooja Room
+</div>
+
+<div class="select-card" data-room="office">
+<span class="icon">💻</span>
+Home Office
+</div>
+
+</div>
+
+</div>
+
+
+<!-- STYLE -->
+
+<div class="card">
+
+<h2>🎨 3. Select Style</h2>
+
+<div class="style-grid">
+
+<div class="select-card active" data-style="modern">
+Modern
+</div>
+
+<div class="select-card" data-style="traditional">
+Traditional
+</div>
+
+<div class="select-card" data-style="minimal">
+Minimal
+</div>
+
+<div class="select-card" data-style="luxury">
+Luxury
+</div>
+
+<div class="select-card" data-style="indian">
+Indian Traditional
+</div>
+
+</div>
+
+</div>
+
+
+<!-- BUDGET -->
+
+<div class="card">
+
+<h2>💰 4. Select Exact Budget</h2>
+
+<div class="budget-grid">
+
+<div class="budget-card active" data-budget="10000">
+<strong>₹10,000</strong>
+<small>Basic</small>
+</div>
+
+<div class="budget-card" data-budget="20000">
+<strong>₹20,000</strong>
+<small>Starter+</small>
+</div>
+
+<div class="budget-card" data-budget="30000">
+<strong>₹30,000</strong>
+<small>Comfort</small>
+</div>
+
+<div class="budget-card" data-budget="40000">
+<strong>₹40,000</strong>
+<small>Enhanced</small>
+</div>
+
+<div class="budget-card" data-budget="50000">
+<strong>₹50,000</strong>
+<small>Premium</small>
+</div>
+
+<div class="budget-card" data-budget="60000">
+<strong>₹60,000</strong>
+<small>Premium+</small>
+</div>
+
+<div class="budget-card" data-budget="70000">
+<strong>₹70,000</strong>
+<small>Luxury</small>
+</div>
+
+<div class="budget-card" data-budget="80000">
+<strong>₹80,000</strong>
+<small>Luxury+</small>
+</div>
+
+<div class="budget-card" data-budget="90000">
+<strong>₹90,000</strong>
+<small>High Luxury</small>
+</div>
+
+<div class="budget-card" data-budget="100000">
+<strong>₹1,00,000</strong>
+<small>Complete Luxury</small>
+</div>
+
+</div>
+
+</div>
+
+
+<div style="text-align:center;margin:30px">
+
+<button onclick="generateDesign()">
+✨ Generate Complete Room Design
+</button>
+
+</div>
+
+
+<!-- RESULT -->
+
+<div id="result">
+
+
+<div class="card">
+
+<h2>🏠 Customer Design Summary</h2>
+
+<div class="summary-grid">
+
+<div class="summary-box">
+<strong>Room</strong>
+<span id="resultRoom"></span>
+</div>
+
+<div class="summary-box">
+<strong>Style</strong>
+<span id="resultStyle"></span>
+</div>
+
+<div class="summary-box">
+<strong>Budget</strong>
+<span id="resultBudget"></span>
+</div>
+
+<div class="summary-box">
+<strong>Design Level</strong>
+<span id="designLevel"></span>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- COMPLETE ROOM -->
+
+<div class="card">
+
+<h2>📸 Complete Room Decoration</h2>
+
+<p>
+This preview changes according to the selected room AND budget.
+</p>
+
+<div id="roomPreview" class="room-preview">
+
+<div class="wall"></div>
+<div class="floor"></div>
+
+</div>
+
+</div>
+
+
+<!-- BUDGET -->
+
+<div class="card">
+
+<h2>💰 Complete Budget Plan</h2>
+
+<div class="budget-bar">
+
+<div id="budgetFill" class="budget-fill"></div>
+
+</div>
+
+<p>
+Planned Cost:
+<strong id="plannedCost"></strong>
+</p>
+
+<div id="budgetItems"></div>
+
+</div>
+
+
+<!-- FURNITURE -->
+
+<div class="card">
+
+<h2>🪑 Furniture & Items Included</h2>
+
+<div id="itemGrid" class="item-grid"></div>
+
+</div>
+
+
+<!-- CUSTOMER UNDERSTANDING -->
+
+<div class="card">
+
+<h2>👨‍👩‍👧 Customer Final Result</h2>
+
+<div class="customer-box">
+
+<ul id="customerList"></ul>
+
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<script>
+
+/* ============================
+   VARIABLES
+============================ */
+
+let selectedRoom = "living";
+let selectedStyle = "modern";
+let selectedBudget = 10000;
+
+
+/* ============================
+   ROOM SELECTION
+============================ */
+
+document.querySelectorAll(".room-grid .select-card")
+.forEach(card => {
+
+    card.addEventListener("click",function(){
+
+        document
+        .querySelectorAll(".room-grid .select-card")
+        .forEach(x => x.classList.remove("active"));
+
+        this.classList.add("active");
+
+        selectedRoom = this.dataset.room;
+
+    });
+
+});
+
+
+/* ============================
+   STYLE SELECTION
+============================ */
+
+document.querySelectorAll(".style-grid .select-card")
+.forEach(card => {
+
+    card.addEventListener("click",function(){
+
+        document
+        .querySelectorAll(".style-grid .select-card")
+        .forEach(x => x.classList.remove("active"));
+
+        this.classList.add("active");
+
+        selectedStyle = this.dataset.style;
+
+    });
+
+});
+
+
+/* ============================
+   BUDGET SELECTION
+============================ */
+
+document.querySelectorAll(".budget-card")
+.forEach(card => {
+
+    card.addEventListener("click",function(){
+
+        document
+        .querySelectorAll(".budget-card")
+        .forEach(x => x.classList.remove("active"));
+
+        this.classList.add("active");
+
+        selectedBudget = Number(this.dataset.budget);
+
+    });
+
+});
+
+
+/* ============================
+   HOUSE PLAN
+============================ */
+
+document.getElementById("planInput")
+.addEventListener("change",function(){
+
+    const file = this.files[0];
+
+    if(file){
+
+        const reader = new FileReader();
+
+        reader.onload = function(e){
+
+            const img = document.getElementById("planPreview");
+
+            img.src = e.target.result;
+
+            img.style.display = "block";
+
+        };
+
+        reader.readAsDataURL(file);
+
+    }
+
+});
+
+
+/* =====================================================
+   DIFFERENT DESIGN FOR EVERY ROOM + EVERY BUDGET
+===================================================== */
+
+const designs = {
+
+
+/* =========================
+   LIVING ROOM
+========================= */
+
+living: {
+
+10000:{
+level:"Basic Living",
+wall:"Warm White",
+floor:"Existing Floor",
+items:[
+["Basic 2-Seater Sofa","🛋️",5500],
+["Basic Curtain","🪟",1200],
+["LED Ceiling Light","💡",800],
+["Small Center Table","🪵",1500],
+["Wall Decoration","🖼️",500]
+]
+},
+
+20000:{
+level:"Starter Living",
+wall:"Cream Beige",
+floor:"Wood-Look Mat",
+items:[
+["3-Seater Sofa","🛋️",8500],
+["Center Table","🪵",2500],
+["Curtains","🪟",1800],
+["LED Ceiling Light","💡",1200],
+["Rug","🟫",2000],
+["Wall Art","🖼️",1200],
+["Plant","🌿",600]
+]
+},
+
+30000:{
+level:"Comfort Living",
+wall:"Light Grey",
+floor:"Wood Finish",
+items:[
+["L-Shape Sofa","🛋️",12500],
+["Coffee Table","🪵",3000],
+["TV Unit","📺",4000],
+["Curtains","🪟",2200],
+["Rug","🟫",2500],
+["Pendant Light","💡",1500],
+["Decor Plants","🌿",1000]
+]
+},
+
+40000:{
+level:"Enhanced Living",
+wall:"Greige Accent Wall",
+floor:"Wood Finish",
+items:[
+["Premium 3-Seater Sofa","🛋️",15000],
+["TV Unit","📺",5500],
+["Coffee Table","🪵",3500],
+["Premium Curtains","🪟",2500],
+["Large Rug","🟫",3000],
+["Floor Lamp","💡",1800],
+["Wall Art","🖼️",1500],
+["Plants","🌿",1000]
+]
+},
+
+50000:{
+level:"Premium Living",
+wall:"Taupe Accent Wall",
+floor:"Premium Wood Finish",
+items:[
+["Premium L-Shape Sofa","🛋️",20000],
+["Designer TV Unit","📺",7000],
+["Designer Coffee Table","🪵",4000],
+["Premium Curtains","🪟",3000],
+["Large Rug","🟫",3500],
+["Pendant Lights","💡",2500],
+["Wall Panels","🧱",2500],
+["Decor Plants","🌿",1500]
+]
+},
+
+60000:{
+level:"Premium+ Living",
+wall:"Textured Beige",
+floor:"Premium Wooden Floor",
+items:[
+["Large L-Shape Sofa","🛋️",24000],
+["Large TV Unit","📺",8000],
+["Designer Center Table","🪵",4500],
+["Premium Curtains","🪟",3500],
+["Large Designer Rug","🟫",4000],
+["Layered Ceiling Lights","💡",3000],
+["Accent Wall Panels","🧱",4000],
+["Decor Items","🏺",2000]
+]
+},
+
+70000:{
+level:"Luxury Living",
+wall:"Luxury Textured Wall",
+floor:"Premium Wooden Floor",
+items:[
+["Luxury Sectional Sofa","🛋️",28000],
+["Designer TV Wall","📺",10000],
+["Luxury Coffee Table","🪵",5500],
+["Motorized Curtains","🪟",4500],
+["Designer Rug","🟫",4500],
+["Chandelier","💡",4500],
+["Wall Panels","🧱",5000],
+["Premium Decor","🏺",3000]
+]
+},
+
+80000:{
+level:"Luxury+ Living",
+wall:"Marble Accent Wall",
+floor:"Luxury Wood Flooring",
+items:[
+["Luxury Sectional Sofa","🛋️",32000],
+["Premium TV Wall","📺",12000],
+["Designer Table","🪵",6000],
+["Motorized Curtains","🪟",5000],
+["Luxury Rug","🟫",5000],
+["Designer Chandelier","💡",5500],
+["Fluted Wall Panels","🧱",6000],
+["Premium Decor","🏺",3500]
+]
+},
+
+90000:{
+level:"High Luxury Living",
+wall:"Marble + Wooden Panel",
+floor:"Premium Flooring",
+items:[
+["Designer Sectional Sofa","🛋️",35000],
+["Luxury TV Wall","📺",14000],
+["Luxury Center Table","🪵",7000],
+["Motorized Curtains","🪟",6000],
+["Luxury Rug","🟫",6000],
+["Designer Chandelier","💡",6500],
+["Feature Wall","🧱",7000],
+["Luxury Decor","🏺",4500]
+]
+},
+
+100000:{
+level:"Complete Luxury Living",
+wall:"Luxury Marble Feature Wall",
+floor:"Designer Wooden Flooring",
+items:[
+["Imported-Style Sectional Sofa","🛋️",40000],
+["Full Designer TV Wall","📺",16000],
+["Luxury Center Table","🪵",8000],
+["Motorized Curtains","🪟",7000],
+["Luxury Designer Rug","🟫",6500],
+["Designer Chandelier","💡",7000],
+["Premium Wall Panels","🧱",8000],
+["Luxury Decoration Package","🏺",7500]
+]
+}
+
+},
+
+
+/* =========================
+   BEDROOM
+========================= */
+
+bedroom:{
+
+10000:{
+level:"Basic Bedroom",
+wall:"Simple Cream",
+floor:"Existing Floor",
+items:[
+["Basic Bed","🛏️",5000],
+["Basic Mattress","🛌",2000],
+["Curtain","🪟",1200],
+["LED Light","💡",700],
+["Small Side Table","🪵",800]
+]
+},
+
+20000:{
+level:"Starter Bedroom",
+wall:"Light Beige",
+floor:"Simple Wood Mat",
+items:[
+["Double Bed","🛏️",7000],
+["Mattress","🛌",3500],
+["Side Table","🪵",1500],
+["Curtains","🪟",1800],
+["Bedside Light","💡",900],
+["Mirror","🪞",1200],
+["Wall Decor","🖼️",700]
+]
+},
+
+30000:{
+level:"Comfort Bedroom",
+wall:"Soft Grey",
+floor:"Wood Finish",
+items:[
+["Storage Bed","🛏️",9500],
+["Good Mattress","🛌",4500],
+["2 Side Tables","🪵",2500],
+["Small Wardrobe","🚪",5000],
+["Curtains","🪟",1800],
+["Bedside Lamps","💡",1200],
+["Mirror","🪞",1000]
+]
+},
+
+40000:{
+level:"Enhanced Bedroom",
+wall:"Sage Green Accent",
+floor:"Wood Finish",
+items:[
+["Queen Bed","🛏️",11000],
+["Premium Mattress","🛌",5500],
+["2 Side Tables","🪵",3000],
+["Wardrobe","🚪",7000],
+["Dressing Mirror","🪞",2500],
+["Curtains","🪟",2000],
+["Lamps","💡",1500],
+["Rug","🟫",1500]
+]
+},
+
+50000:{
+level:"Premium Bedroom",
+wall:"Taupe Accent Wall",
+floor:"Premium Wood",
+items:[
+["Premium Queen Bed","🛏️",14000],
+["Premium Mattress","🛌",6500],
+["2 Designer Side Tables","🪵",3500],
+["Large Wardrobe","🚪",9000],
+["Dressing Table","🪞",4000],
+["Premium Curtains","🪟",2500],
+["Pendant Lights","💡",2500]
+]
+},
+
+60000:{
+level:"Premium+ Bedroom",
+wall:"Textured Beige",
+floor:"Premium Wooden Floor",
+items:[
+["Designer Bed","🛏️",17000],
+["Luxury Mattress","🛌",7500],
+["2 Side Tables","🪵",4000],
+["Large Wardrobe","🚪",11000],
+["Dressing Unit","🪞",4500],
+["Premium Curtains","🪟",3000],
+["Layered Lighting","💡",3000]
+]
+},
+
+70000:{
+level:"Luxury Bedroom",
+wall:"Luxury Textured Accent",
+floor:"Premium Wood",
+items:[
+["Luxury Bed","🛏️",20000],
+["Luxury Mattress","🛌",8500],
+["Designer Side Tables","🪵",5000],
+["Sliding Wardrobe","🚪",13000],
+["Luxury Dressing Table","🪞",5500],
+["Premium Curtains","🪟",3500],
+["Designer Lighting","💡",4500]
+]
+},
+
+80000:{
+level:"Luxury+ Bedroom",
+wall:"Marble + Fluted Wall",
+floor:"Luxury Flooring",
+items:[
+["Luxury Upholstered Bed","🛏️",23000],
+["Premium Mattress","🛌",9500],
+["Designer Side Tables","🪵",5500],
+["Large Sliding Wardrobe","🚪",15000],
+["Designer Dressing Unit","🪞",6500],
+["Motorized Curtains","🪟",4500],
+["Chandelier","💡",4000]
+]
+},
+
+90000:{
+level:"High Luxury Bedroom",
+wall:"Designer Feature Wall",
+floor:"Luxury Wood Flooring",
+items:[
+["Designer King Bed","🛏️",27000],
+["Luxury Mattress","🛌",10500],
+["Designer Side Tables","🪵",6000],
+["Full Wardrobe","🚪",17000],
+["Luxury Dressing Area","🪞",7000],
+["Motorized Curtains","🪟",5000],
+["Designer Lighting","💡",5000]
+]
+},
+
+100000:{
+level:"Complete Luxury Bedroom",
+wall:"Luxury Marble + Wood Panels",
+floor:"Designer Flooring",
+items:[
+["Luxury King Bed","🛏️",30000],
+["Premium Mattress","🛌",12000],
+["Designer Side Tables","🪵",7000],
+["Full Designer Wardrobe","🚪",20000],
+["Luxury Dressing Unit","🪞",9000],
+["Motorized Curtains","🪟",6000],
+["Designer Chandelier","💡",6000]
+]
+}
+
+},
+
+
+/* =========================
+   KITCHEN
+========================= */
+
+kitchen:{
+
+10000:{
+level:"Basic Kitchen",
+wall:"White",
+floor:"Existing Floor",
+items:[
+["Open Storage Shelves","🗄️",2500],
+["Basic Countertop","⬛",2500],
+["Kitchen Sink","🚰",1800],
+["Basic Tap","🚿",900],
+["LED Light","💡",700]
+]
+},
+
+20000:{
+level:"Starter Kitchen",
+wall:"Cream",
+floor:"Basic Tile",
+items:[
+["Base Cabinets","🗄️",5500],
+["Countertop","⬛",3500],
+["Sink","🚰",1800],
+["Tap","🚿",1000],
+["2-Burner Hob","🔥",3000],
+["LED Lighting","💡",1000]
+]
+},
+
+30000:{
+level:"Comfort Kitchen",
+wall:"Light Grey",
+floor:"Tile",
+items:[
+["Modular Base Cabinets","🗄️",8000],
+["Wall Cabinets","🗄️",5000],
+["Granite Countertop","⬛",4500],
+["Sink + Tap","🚰",3000],
+["Hob","🔥",3500],
+["LED Lighting","💡",1500]
+]
+},
+
+40000:{
+level:"Enhanced Kitchen",
+wall:"Warm White + Green Backsplash",
+floor:"Premium Tile",
+items:[
+["Full Modular Cabinets","🗄️",11000],
+["Wall Cabinets","🗄️",6500],
+["Granite Countertop","⬛",5000],
+["Sink + Tap","🚰",3000],
+["Hob","🔥",4000],
+["Chimney","💨",4500]
+]
+},
+
+50000:{
+level:"Premium Kitchen",
+wall:"Designer Backsplash",
+floor:"Premium Tile",
+items:[
+["Premium Modular Cabinets","🗄️",14000],
+["Tall Storage Unit","🗄️",6000],
+["Granite Countertop","⬛",5500],
+["Premium Sink","🚰",3500],
+["Hob","🔥",4500],
+["Chimney","💨",6000],
+["Under Cabinet Lights","💡",1500]
+]
+},
+
+60000:{
+level:"Premium+ Kitchen",
+wall:"Glossy Backsplash",
+floor:"Premium Tile",
+items:[
+["Premium Modular Kitchen","🗄️",18000],
+["Tall Unit","🗄️",7500],
+["Quartz Countertop","⬛",7000],
+["Premium Sink","🚰",4000],
+["Built-in Hob","🔥",5000],
+["Designer Chimney","💨",7000],
+["Under Cabinet Lighting","💡",2000]
+]
+},
+
+70000:{
+level:"Luxury Kitchen",
+wall:"Luxury Backsplash",
+floor:"Large Format Tile",
+items:[
+["Luxury Modular Cabinets","🗄️",22000],
+["Tall Pantry Unit","🗄️",8500],
+["Quartz Countertop","⬛",8000],
+["Designer Sink","🚰",4500],
+["Built-in Hob","🔥",5500],
+["Designer Chimney","💨",8500],
+["Premium Lighting","💡",2500]
+]
+},
+
+80000:{
+level:"Luxury+ Kitchen",
+wall:"Marble Backsplash",
+floor:"Luxury Tile",
+items:[
+["Designer Modular Cabinets","🗄️",26000],
+["Tall Pantry","🗄️",10000],
+["Quartz Countertop","⬛",9500],
+["Premium Sink","🚰",5000],
+["Built-in Hob","🔥",6500],
+["Designer Chimney","💨",9500],
+["LED Lighting","💡",3000]
+]
+},
+
+90000:{
+level:"High Luxury Kitchen",
+wall:"Marble + Wood Finish",
+floor:"Luxury Flooring",
+items:[
+["Full Designer Kitchen","🗄️",30000],
+["Full Pantry Storage","🗄️",12000],
+["Quartz Island Counter","⬛",11000],
+["Designer Sink","🚰",5500],
+["Premium Hob","🔥",7500],
+["Premium Chimney","💨",10500],
+["Designer Lighting","💡",3500]
+]
+},
+
+100000:{
+level:"Complete Luxury Kitchen",
+wall:"Full Marble Backsplash",
+floor:"Designer Tile",
+items:[
+["Luxury Modular Kitchen","🗄️",35000],
+["Full Tall Storage","🗄️",14000],
+["Premium Quartz Counter","⬛",12000],
+["Designer Sink","🚰",6000],
+["Premium Built-in Hob","🔥",8500],
+["Luxury Chimney","💨",12000],
+["Designer Lighting","💡",4000]
+]
+}
+
+},
+
+
+/* =========================
+   BATHROOM
+========================= */
+
+bathroom:{
+
+10000:{
+level:"Basic Bathroom",
+wall:"White Tile",
+floor:"Basic Tile",
+items:[
+["Basic WC","🚽",2500],
+["Wash Basin","🚰",1800],
+["Mirror","🪞",700],
+["Shower","🚿",1000],
+["Towel Rack","🧺",600],
+["LED Light","💡",500]
+]
+},
+
+20000:{
+level:"Starter Bathroom",
+wall:"White + Grey Tile",
+floor:"Anti-Skid Tile",
+items:[
+["WC","🚽",3500],
+["Basin","🚰",2500],
+["Mirror","🪞",1000],
+["Shower Set","🚿",2500],
+["Vanity Storage","🗄️",3000],
+["Towel Rack","🧺",1000],
+["Lighting","💡",1000]
+]
+},
+
+30000:{
+level:"Comfort Bathroom",
+wall:"Grey Tile",
+floor:"Anti-Skid Tile",
+items:[
+["Premium WC","🚽",4500],
+["Designer Basin","🚰",3500],
+["Mirror Cabinet","🪞",2500],
+["Shower Set","🚿",3500],
+["Vanity Unit","🗄️",4000],
+["Geyser","♨️",5000],
+["Lighting","💡",1200]
+]
+},
+
+40000:{
+level:"Enhanced Bathroom",
+wall:"Stone Grey Tile",
+floor:"Premium Anti-Skid",
+items:[
+["Premium WC","🚽",5500],
+["Designer Basin","🚰",4000],
+["Large Mirror","🪞",2500],
+["Rain Shower","🚿",4500],
+["Vanity Unit","🗄️",5500],
+["Geyser","♨️",6500],
+["Exhaust Fan","🌬️",1500]
+]
+},
+
+50000:{
+level:"Premium Bathroom",
+wall:"Marble Look Tile",
+floor:"Premium Tile",
+items:[
+["Premium WC","🚽",6500],
+["Counter Basin","🚰",5000],
+["Designer Mirror","🪞",3500],
+["Rain Shower","🚿",5500],
+["Vanity Cabinet","🗄️",6500],
+["Geyser","♨️",7500],
+["Premium Lighting","💡",2000]
+]
+},
+
+60000:{
+level:"Premium+ Bathroom",
+wall:"Marble Finish",
+floor:"Luxury Anti-Skid",
+items:[
+["Designer WC","🚽",7500],
+["Countertop Basin","🚰",6000],
+["LED Mirror","🪞",5000],
+["Rain Shower","🚿",6500],
+["Large Vanity","🗄️",7500],
+["Premium Geyser","♨️",8500],
+["Lighting","💡",2500]
+]
+},
+
+70000:{
+level:"Luxury Bathroom",
+wall:"Full Marble Look",
+floor:"Luxury Tile",
+items:[
+["Luxury WC","🚽",8500],
+["Designer Basin","🚰",7000],
+["LED Mirror","🪞",6000],
+["Rain Shower","🚿",7500],
+["Luxury Vanity","🗄️",9000],
+["Premium Geyser","♨️",9500],
+["Designer Lights","💡",3500]
+]
+},
+
+80000:{
+level:"Luxury+ Bathroom",
+wall:"Marble + Accent Tile",
+floor:"Designer Anti-Skid",
+items:[
+["Luxury WC","🚽",9500],
+["Designer Counter Basin","🚰",8000],
+["Large LED Mirror","🪞",7000],
+["Rain Shower System","🚿",9000],
+["Designer Vanity","🗄️",10500],
+["Premium Geyser","♨️",10500],
+["Designer Lighting","💡",4000]
+]
+},
+
+90000:{
+level:"High Luxury Bathroom",
+wall:"Premium Marble",
+floor:"Luxury Stone Finish",
+items:[
+["Designer WC","🚽",11000],
+["Luxury Basin","🚰",9000],
+["Backlit Mirror","🪞",8500],
+["Rain Shower System","🚿",10000],
+["Luxury Vanity","🗄️",12000],
+["Premium Geyser","♨️",11500],
+["Luxury Lighting","💡",5000]
+]
+},
+
+100000:{
+level:"Complete Luxury Bathroom",
+wall:"Full Luxury Marble",
+floor:"Designer Stone",
+items:[
+["Luxury WC","🚽",13000],
+["Designer Counter Basin","🚰",10500],
+["Full LED Mirror","🪞",10000],
+["Luxury Rain Shower","🚿",12000],
+["Designer Vanity","🗄️",15000],
+["Premium Geyser","♨️",13000],
+["Luxury Lighting","💡",6000]
+]
+}
+
+},
+
+
+/* =========================
+   DINING
+========================= */
+
+dining:{
+
+10000:{
+level:"Basic Dining",
+wall:"Warm White",
+floor:"Existing Floor",
+items:[
+["Basic Dining Table","🍽️",4500],
+["4 Chairs","🪑",3000],
+["Basic Light","💡",800],
+["Table Mat Set","🍽️",500]
+]
+},
+
+20000:{
+level:"Starter Dining",
+wall:"Cream",
+floor:"Wood Mat",
+items:[
+["4-Seater Table","🍽️",6000],
+["4 Chairs","🪑",4000],
+["Pendant Light","💡",1500],
+["Curtains","🪟",1800],
+["Centerpiece","🏺",800],
+["Wall Art","🖼️",900]
+]
+},
+
+30000:{
+level:"Comfort Dining",
+wall:"Light Beige",
+floor:"Wood Finish",
+items:[
+["6-Seater Table","🍽️",8500],
+["6 Chairs","🪑",6000],
+["Pendant Light","💡",2000],
+["Crockery Storage","🗄️",4500],
+["Curtains","🪟",2000],
+["Centerpiece","🏺",1000]
+]
+},
+
+40000:{
+level:"Enhanced Dining",
+wall:"Accent Beige",
+floor:"Premium Wood",
+items:[
+["6-Seater Premium Table","🍽️",10000],
+["6 Premium Chairs","🪑",7500],
+["Designer Pendant","💡",3000],
+["Crockery Unit","🗄️",6500],
+["Curtains","🪟",2500],
+["Wall Art","🖼️",1500]
+]
+},
+
+50000:{
+level:"Premium Dining",
+wall:"Taupe Feature Wall",
+floor:"Premium Wood",
+items:[
+["Designer 6-Seater Table","🍽️",13000],
+["Premium Chairs","🪑",9000],
+["Designer Pendant","💡",3500],
+["Large Crockery Unit","🗄️",8000],
+["Premium Curtains","🪟",3000],
+["Decor Package","🏺",2500]
+]
+},
+
+60000:{
+level:"Premium+ Dining",
+wall:"Textured Accent",
+floor:"Premium Flooring",
+items:[
+["Designer Dining Table","🍽️",16000],
+["6 Designer Chairs","🪑",11000],
+["Statement Chandelier","💡",5000],
+["Designer Crockery Unit","🗄️",9000],
+["Premium Curtains","🪟",3500],
+["Center Decor","🏺",2500]
+]
+},
+
+70000:{
+level:"Luxury Dining",
+wall:"Luxury Textured Wall",
+floor:"Luxury Wood",
+items:[
+["Luxury Dining Table","🍽️",19000],
+["6 Luxury Chairs","🪑",13000],
+["Designer Chandelier","💡",6000],
+["Large Crockery Cabinet","🗄️",11000],
+["Premium Curtains","🪟",4000],
+["Luxury Decor","🏺",3500]
+]
+},
+
+80000:{
+level:"Luxury+ Dining",
+wall:"Marble Accent Wall",
+floor:"Designer Flooring",
+items:[
+["Designer Dining Table","🍽️",22000],
+["6 Premium Chairs","🪑",15000],
+["Luxury Chandelier","💡",7000],
+["Designer Crockery Cabinet","🗄️",13000],
+["Motorized Curtains","🪟",5000],
+["Luxury Decor","🏺",4500]
+]
+},
+
+90000:{
+level:"High Luxury Dining",
+wall:"Marble + Wood Panel",
+floor:"Luxury Flooring",
+items:[
+["Luxury Dining Table","🍽️",25000],
+["6 Designer Chairs","🪑",17000],
+["Statement Chandelier","💡",8500],
+["Full Crockery Unit","🗄️",15000],
+["Motorized Curtains","🪟",6000],
+["Luxury Decor","🏺",5000]
+]
+},
+
+100000:{
+level:"Complete Luxury Dining",
+wall:"Luxury Marble Feature",
+floor:"Designer Wood Flooring",
+items:[
+["Luxury Dining Table","🍽️",28000],
+["8 Designer Chairs","🪑",20000],
+["Luxury Chandelier","💡",10000],
+["Full Designer Crockery Unit","🗄️",17000],
+["Motorized Curtains","🪟",7000],
+["Premium Decoration","🏺",7000]
+]
+}
+
+},
+
+
+/* =========================
+   BALCONY
+========================= */
+
+balcony:{
+
+10000:{
+level:"Basic Balcony",
+wall:"White",
+floor:"Existing Tile",
+items:[
+["Plastic Outdoor Chair","🪑",1800],
+["Small Table","🪵",1500],
+["2 Plants","🌿",1200],
+["Planters","🪴",1000],
+["Basic Light","💡",700]
+]
+},
+
+20000:{
+level:"Starter Balcony",
+wall:"Light Green",
+floor:"Outdoor Mat",
+items:[
+["2 Outdoor Chairs","🪑",4000],
+["Small Table","🪵",2500],
+["4 Plants","🌿",2500],
+["Planters","🪴",1800],
+["String Lights","💡",1200],
+["Outdoor Rug","🟫",1500]
+]
+},
+
+30000:{
+level:"Comfort Balcony",
+wall:"Sage Green",
+floor:"Wood-Look Deck",
+items:[
+["2 Lounge Chairs","🪑",6000],
+["Coffee Table","🪵",3000],
+["6 Plants","🌿",3500],
+["Designer Planters","🪴",2500],
+["String Lights","💡",1500],
+["Outdoor Rug","🟫",2000],
+["Vertical Garden","🌿",3000]
+]
+},
+
+40000:{
+level:"Enhanced Balcony",
+wall:"Terracotta Accent",
+floor:"Deck Flooring",
+items:[
+["Outdoor Sofa","🛋️",9000],
+["Coffee Table","🪵",3500],
+["8 Plants","🌿",4500],
+["Designer Planters","🪴",3000],
+["Warm Lighting","💡",2500],
+["Outdoor Rug","🟫",2500],
+["Vertical Garden","🌿",4000]
+]
+},
+
+50000:{
+level:"Premium Balcony",
+wall:"Earth Tone Accent",
+floor:"Premium Deck",
+items:[
+["Outdoor Sofa Set","🛋️",12000],
+["Outdoor Table","🪵",4000],
+["Large Plant Collection","🌿",6000],
+["Premium Planters","🪴",3500],
+["Pendant Lights","💡",3000],
+["Outdoor Rug","🟫",3000],
+["Vertical Garden","🌿",5000]
+]
+},
+
+60000:{
+level:"Premium+ Balcony",
+wall:"Textured Green",
+floor:"Premium Decking",
+items:[
+["Designer Outdoor Sofa","🛋️",15000],
+["Designer Table","🪵",5000],
+["Large Plant Collection","🌿",7000],
+["Premium Planters","🪴",4000],
+["Designer Lights","💡",3500],
+["Outdoor Rug","🟫",3500],
+["Vertical Garden","🌿",6000]
+]
+},
+
+70000:{
+level:"Luxury Balcony",
+wall:"Luxury Earth Tone",
+floor:"Designer Deck",
+items:[
+["Luxury Outdoor Sofa","🛋️",18000],
+["Designer Table","🪵",6000],
+["Large Planters","🪴",5000],
+["Premium Plants","🌿",8000],
+["Designer Lighting","💡",4500],
+["Luxury Rug","🟫",4000],
+["Vertical Garden","🌿",7000]
+]
+},
+
+80000:{
+level:"Luxury+ Balcony",
+wall:"Stone Accent",
+floor:"Luxury Decking",
+items:[
+["Luxury Outdoor Sofa Set","🛋️",22000],
+["Designer Outdoor Table","🪵",7000],
+["Premium Planters","🪴",6000],
+["Large Plant Collection","🌿",9000],
+["Designer Lighting","💡",5500],
+["Luxury Rug","🟫",4500],
+["Full Vertical Garden","🌿",8000]
+]
+},
+
+90000:{
+level:"High Luxury Balcony",
+wall:"Stone + Green Wall",
+floor:"Designer Deck",
+items:[
+["Premium Outdoor Sofa Set","🛋️",26000],
+["Luxury Table","🪵",8000],
+["Designer Planters","🪴",7000],
+["Large Garden Collection","🌿",11000],
+["Designer Lights","💡",6500],
+["Luxury Rug","🟫",5000],
+["Full Green Wall","🌿",10000]
+]
+},
+
+100000:{
+level:"Complete Luxury Balcony",
+wall:"Luxury Stone Feature",
+floor:"Premium Decking",
+items:[
+["Luxury Outdoor Lounge Set","🛋️",30000],
+["Designer Outdoor Table","🪵",9000],
+["Premium Planter Collection","🪴",8000],
+["Complete Green Garden","🌿",14000],
+["Designer Lighting","💡",7500],
+["Luxury Outdoor Rug","🟫",6000],
+["Full Vertical Garden","🌿",12000]
+]
+}
+
+},
+
+
+/* =========================
+   POOJA
+========================= */
+
+pooja:{
+
+10000:{
+level:"Basic Pooja Room",
+wall:"Cream",
+floor:"Existing Floor",
+items:[
+["Basic Pooja Unit","🪔",4500],
+["Small Storage","🗄️",1500],
+["Diya Set","🪔",500],
+["Bell","🔔",400],
+["LED Light","💡",700]
+]
+},
+
+20000:{
+level:"Starter Pooja",
+wall:"Cream + Gold",
+floor:"Tile",
+items:[
+["Wooden Pooja Unit","🪔",7000],
+["Drawer Storage","🗄️",2500],
+["Diya Set","🪔",800],
+["Bell","🔔",500],
+["Back Panel","🧱",2000],
+["Decor Light","💡",1200]
+]
+},
+
+30000:{
+level:"Comfort Pooja",
+wall:"Light Yellow",
+floor:"Premium Tile",
+items:[
+["Large Pooja Unit","🪔",9500],
+["Storage Drawers","🗄️",3500],
+["Decorative Back Panel","🧱",4000],
+["Diya Set","🪔",1000],
+["Bell","🔔",600],
+["Lighting","💡",1800]
+]
+},
+
+40000:{
+level:"Enhanced Pooja",
+wall:"Cream + Wooden Panel",
+floor:"Premium Tile",
+items:[
+["Designer Pooja Unit","🪔",12000],
+["Storage Cabinet","🗄️",4500],
+["Wooden Back Panel","🧱",5500],
+["Diya Collection","🪔",1500],
+["Bell","🔔",800],
+["Designer Lighting","💡",2500]
+]
+},
+
+50000:{
+level:"Premium Pooja",
+wall:"Cream + Gold Accent",
+floor:"Premium Flooring",
+items:[
+["Premium Pooja Unit","🪔",15000],
+["Large Storage","🗄️",6000],
+["Designer Backdrop","🧱",7000],
+["Premium Diya Set","🪔",1800],
+["Bell","🔔",1000],
+["Designer Lighting","💡",3000]
+]
+},
+
+60000:{
+level:"Premium+ Pooja",
+wall:"Textured Cream",
+floor:"Premium Marble Look",
+items:[
+["Designer Pooja Unit","🪔",18000],
+["Full Storage","🗄️",7500],
+["Decorative Backdrop","🧱",8500],
+["Premium Diya Set","🪔",2200],
+["Bell","🔔",1200],
+["Layered Lighting","💡",3500]
+]
+},
+
+70000:{
+level:"Luxury Pooja",
+wall:"Marble + Gold",
+floor:"Marble Look",
+items:[
+["Luxury Pooja Unit","🪔",22000],
+["Designer Storage","🗄️",9000],
+["Luxury Backdrop","🧱",11000],
+["Premium Diya Collection","🪔",2500],
+["Designer Bell","🔔",1500],
+["Chandelier Lighting","💡",4500]
+]
+},
+
+80000:{
+level:"Luxury+ Pooja",
+wall:"Marble + Wooden Panel",
+floor:"Luxury Flooring",
+items:[
+["Luxury Pooja Mandir","🪔",26000],
+["Full Storage Unit","🗄️",11000],
+["Designer Marble Backdrop","🧱",13000],
+["Premium Diya Collection","🪔",3000],
+["Designer Bell","🔔",1800],
+["Luxury Lighting","💡",5500]
+]
+},
+
+90000:{
+level:"High Luxury Pooja",
+wall:"Full Marble Feature",
+floor:"Luxury Marble",
+items:[
+["Large Luxury Mandir","🪔",30000],
+["Designer Storage","🗄️",13000],
+["Full Marble Backdrop","🧱",16000],
+["Premium Diya Collection","🪔",3500],
+["Designer Bell","🔔",2000],
+["Luxury Lighting","💡",6500]
+]
+},
+
+100000:{
+level:"Complete Luxury Pooja",
+wall:"Luxury Marble + Gold",
+floor:"Premium Marble",
+items:[
+["Complete Luxury Mandir","🪔",35000],
+["Full Designer Storage","🗄️",15000],
+["Luxury Marble Backdrop","🧱",19000],
+["Premium Diya Collection","🪔",4500],
+["Designer Bell","🔔",2500],
+["Luxury Lighting","💡",7500]
+]
+}
+
+},
+
+
+/* =========================
+   OFFICE
+========================= */
+
+office:{
+
+10000:{
+level:"Basic Home Office",
+wall:"White",
+floor:"Existing Floor",
+items:[
+["Basic Study Table","🪑",3500],
+["Basic Chair","💺",2500],
+["Table Lamp","💡",700],
+["Small Shelf","🗄️",1200],
+["Plant","🌿",500]
+]
+},
+
+20000:{
+level:"Starter Office",
+wall:"Light Grey",
+floor:"Wood Mat",
+items:[
+["Study Desk","🪑",5000],
+["Office Chair","💺",4000],
+["Table Lamp","💡",1000],
+["Bookshelf","🗄️",2500],
+["Curtains","🪟",1800],
+["Plant","🌿",700]
+]
+},
+
+30000:{
+level:"Comfort Office",
+wall:"Sage Grey",
+floor:"Wood Finish",
+items:[
+["Large Work Desk","🪑",7000],
+["Ergonomic Chair","💺",6000],
+["Monitor","🖥️",5000],
+["Bookshelf","🗄️",3500],
+["Desk Lamp","💡",1200],
+["Curtains","🪟",1800]
+]
+},
+
+40000:{
+level:"Enhanced Office",
+wall:"Blue-Grey Accent",
+floor:"Wood Finish",
+items:[
+["Premium Work Desk","🪑",8500],
+["Ergonomic Chair","💺",7500],
+["Monitor","🖥️",6500],
+["Bookshelf","🗄️",4500],
+["Desk Lamp","💡",1500],
+["Curtains","🪟",2000],
+["Plant","🌿",800]
+]
+},
+
+50000:{
+level:"Premium Office",
+wall:"Deep Green Accent",
+floor:"Premium Wood",
+items:[
+["Designer Desk","🪑",11000],
+["Premium Ergonomic Chair","💺",9000],
+["Large Monitor","🖥️",8500],
+["Storage Cabinet","🗄️",5500],
+["Designer Lamp","💡",2000],
+["Premium Curtains","🪟",2500],
+["Decor","🏺",1200]
+]
+},
+
+60000:{
+level:"Premium+ Office",
+wall:"Textured Green",
+floor:"Premium Flooring",
+items:[
+["Large Designer Desk","🪑",13000],
+["Premium Ergonomic Chair","💺",10500],
+["Dual Monitor Setup","🖥️",11000],
+["Storage Cabinet","🗄️",6500],
+["Designer Lamp","💡",2500],
+["Premium Curtains","🪟",3000],
+["Decor Plants","🌿",1500]
+]
+},
+
+70000:{
+level:"Luxury Office",
+wall:"Dark Blue Feature Wall",
+floor:"Luxury Wood",
+items:[
+["Executive Desk","🪑",16000],
+["Executive Chair","💺",13000],
+["Dual Monitor Setup","🖥️",13000],
+["Large Bookshelf","🗄️",8000],
+["Designer Lighting","💡",3500],
+["Premium Curtains","🪟",3500],
+["Premium Decor","🏺",2000]
+]
+},
+
+80000:{
+level:"Luxury+ Office",
+wall:"Wood + Dark Accent",
+floor:"Designer Wood",
+items:[
+["Luxury Executive Desk","🪑",19000],
+["Luxury Executive Chair","💺",15000],
+["Premium Dual Monitor","🖥️",16000],
+["Designer Storage","🗄️",9500],
+["Designer Lighting","💡",4000],
+["Motorized Blinds","🪟",4500],
+["Premium Decor","🏺",2500]
+]
+},
+
+90000:{
+level:"High Luxury Office",
+wall:"Designer Wood Panel",
+floor:"Luxury Flooring",
+items:[
+["Large Executive Desk","🪑",22000],
+["Luxury Executive Chair","💺",18000],
+["Professional Monitor Setup","🖥️",19000],
+["Full Storage Wall","🗄️",11000],
+["Designer Lighting","💡",5000],
+["Motorized Blinds","🪟",5000],
+["Luxury Decor","🏺",3000]
+]
+},
+
+100000:{
+level:"Complete Luxury Office",
+wall:"Luxury Wood + Marble",
+floor:"Designer Flooring",
+items:[
+["Luxury Executive Desk","🪑",26000],
+["Premium Executive Chair","💺",21000],
+["Professional Dual Monitor Setup","🖥️",22000],
+["Full Designer Storage","🗄️",13000],
+["Designer Lighting","💡",6000],
+["Motorized Blinds","🪟",6000],
+["Luxury Decor","🏺",4000]
+]
+}
+
+}
+
+};
+
+
+/* =================================================
+   FORMAT MONEY
+================================================= */
+
+function money(value){
+
+    return "₹" + value.toLocaleString("en-IN");
+
+}
+
+
+/* =================================================
+   GENERATE
+================================================= */
+
+function generateDesign(){
+
+    const design = designs[selectedRoom][selectedBudget];
+
+    if(!design){
+
+        alert("Design not available.");
+
+        return;
+
+    }
+
+    document.getElementById("result").style.display="block";
+
+    document.getElementById("resultRoom").textContent =
+        getRoomName(selectedRoom);
+
+    document.getElementById("resultStyle").textContent =
+        getStyleName(selectedStyle);
+
+    document.getElementById("resultBudget").textContent =
+        money(selectedBudget);
+
+    document.getElementById("designLevel").textContent =
+        design.level;
+
+
+    /* ITEMS */
+
+    let total = 0;
+
+    design.items.forEach(item => {
+
+        total += item[2];
+
+    });
+
+
+    document.getElementById("plannedCost").textContent =
+        money(total);
+
+
+    /* BUDGET BAR */
+
+    let percentage = Math.min(
+        (total / selectedBudget) * 100,
+        100
+    );
+
+    document.getElementById("budgetFill").style.width =
+        percentage + "%";
+
+
+    /* ITEM CARDS */
+
+    let itemHTML = "";
+
+    design.items.forEach(item => {
+
+        itemHTML += `
+
+        <div class="item-card">
+
+            <div class="item-image">
+                ${item[1]}
+            </div>
+
+            <div class="item-info">
+
+                <h4>${item[0]}</h4>
+
+                <p>
+                    Suitable for:
+                    ${getRoomName(selectedRoom)}
+                </p>
+
+                <p class="price">
+                    ${money(item[2])}
+                </p>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+
+    document.getElementById("itemGrid").innerHTML =
+        itemHTML;
+
+
+    /* BUDGET BREAKDOWN */
+
+    let budgetHTML = "";
+
+    design.items.forEach(item => {
+
+        budgetHTML += `
+
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            padding:12px;
+            border-bottom:1px solid #eee;
+        ">
+
+            <span>${item[1]} ${item[0]}</span>
+
+            <strong>${money(item[2])}</strong>
+
+        </div>
+
+        `;
+
+    });
+
+
+    budgetHTML += `
+
+    <div style="
+        display:flex;
+        justify-content:space-between;
+        padding:18px 12px;
+        font-size:20px;
+    ">
+
+        <strong>Total Design Cost</strong>
+
+        <strong style="color:#6d28d9">
+            ${money(total)}
+        </strong>
+
+    </div>
+
+    `;
+
+
+    document.getElementById("budgetItems").innerHTML =
+        budgetHTML;
+
+
+    /* ROOM PREVIEW */
+
+    createRoomPreview(design);
+
+
+    /* CUSTOMER SUMMARY */
+
+    let customerHTML = "";
+
+    customerHTML += `
+        <li>
+            <strong>Room:</strong>
+            ${getRoomName(selectedRoom)}
+        </li>
+    `;
+
+    customerHTML += `
+        <li>
+            <strong>Style:</strong>
+            ${getStyleName(selectedStyle)}
+        </li>
+    `;
+
+    customerHTML += `
+        <li>
+            <strong>Budget:</strong>
+            ${money(selectedBudget)}
+        </li>
+    `;
+
+    customerHTML += `
+        <li>
+            <strong>Design Package:</strong>
+            ${design.level}
+        </li>
+    `;
+
+    customerHTML += `
+        <li>
+            <strong>Wall:</strong>
+            ${design.wall}
+        </li>
+    `;
+
+    customerHTML += `
+        <li>
+            <strong>Floor:</strong>
+            ${design.floor}
+        </li>
+    `;
+
+    customerHTML += `
+        <li>
+            <strong>Furniture & Decoration:</strong>
+            ${design.items.length} different room-specific items
+        </li>
+    `;
+
+    customerHTML += `
+        <li>
+            <strong>Final Planned Cost:</strong>
+            ${money(total)}
+        </li>
+    `;
+
+
+    document.getElementById("customerList").innerHTML =
+        customerHTML;
+
+
+    document.getElementById("result")
+    .scrollIntoView({
+        behavior:"smooth"
+    });
+
+}
+
+
+/* =================================================
+   ROOM PREVIEW
+================================================= */
+
+function createRoomPreview(design){
+
+    const preview =
+        document.getElementById("roomPreview");
+
+    preview.innerHTML = `
+
+        <div class="wall"
+        style="background:${getWallColor(design.wall)}"></div>
+
+        <div class="floor"></div>
+
+    `;
+
+
+    /* LIVING */
+
+    if(selectedRoom === "living"){
+
+        preview.innerHTML += `
+
+        <div class="window"></div>
+
+        <div class="curtain left"></div>
+        <div class="curtain right"></div>
+
+        <div class="wall-art">🖼️</div>
+
+        <div class="rug"></div>
+
+        <div class="furniture sofa"></div>
+
+        <div class="table"></div>
+
+        <div class="tv-unit"></div>
+
+        <div class="tv"></div>
+
+        `;
+
+    }
+
+
+    /* BEDROOM */
+
+    else if(selectedRoom === "bedroom"){
+
+        preview.innerHTML += `
+
+        <div class="window"></div>
+
+        <div class="curtain left"></div>
+        <div class="curtain right"></div>
+
+        <div class="bed">
+
+            <div class="mattress"></div>
+
+            <div class="pillow one"></div>
+            <div class="pillow two"></div>
+
+        </div>
+
+        <div class="side-table"></div>
+
+        <div class="wardrobe"></div>
+
+        <div class="wall-art">🪞</div>
+
+        `;
+
+    }
+
+
+    /* KITCHEN */
+
+    else if(selectedRoom === "kitchen"){
+
+        preview.innerHTML += `
+
+        <div class="kitchen-counter">
+
+            <div class="kitchen-cabinet one"></div>
+            <div class="kitchen-cabinet two"></div>
+            <div class="kitchen-cabinet three"></div>
+
+        </div>
+
+        <div class="fridge"></div>
+
+        `;
+
+    }
+
+
+    /* BATHROOM */
+
+    else if(selectedRoom === "bathroom"){
+
+        preview.innerHTML += `
+
+        <div class="bath"></div>
+
+        <div class="basin"></div>
+
+        <div class="mirror"></div>
+
+        `;
+
+    }
+
+
+    /* DINING */
+
+    else if(selectedRoom === "dining"){
+
+        preview.innerHTML += `
+
+        <div class="dining-table"></div>
+
+        <div class="chair c1"></div>
+        <div class="chair c2"></div>
+        <div class="chair c3"></div>
+        <div class="chair c4"></div>
+
+        <div class="wall-art">🍽️</div>
+
+        `;
+
+    }
+
+
+    /* BALCONY */
+
+    else if(selectedRoom === "balcony"){
+
+        preview.innerHTML += `
+
+        <div class="balcony-chair"></div>
+
+        <div class="plant p1"></div>
+        <div class="plant p2"></div>
+
+        <div class="plant"
+             style="left:22%;bottom:55px">
+        </div>
+
+        <div class="plant"
+             style="right:25%;bottom:55px">
+        </div>
+
+        `;
+
+    }
+
+
+    /* POOJA */
+
+    else if(selectedRoom === "pooja"){
+
+        preview.innerHTML += `
+
+        <div class="pooja-unit"></div>
+
+        <div class="diya">🪔</div>
+
+        <div class="wall-art">ॐ</div>
+
+        `;
+
+    }
+
+
+    /* OFFICE */
+
+    else if(selectedRoom === "office"){
+
+        preview.innerHTML += `
+
+        <div class="office-desk"></div>
+
+        <div class="office-chair"></div>
+
+        <div class="monitor"></div>
+
+        <div class="wall-art">📚</div>
+
+        `;
+
+    }
+
+}
+
+
+/* =================================================
+   WALL COLOR
+================================================= */
+
+function getWallColor(wall){
+
+    if(wall.includes("White"))
+        return "#f8f7f2";
+
+    if(wall.includes("Cream"))
+        return "#f5e6c8";
+
+    if(wall.includes("Grey"))
+        return "#d9dde1";
+
+    if(wall.includes("Green"))
+        return "#cbdcc4";
+
+    if(wall.includes("Blue"))
+        return "#cbd8e8";
+
+    if(wall.includes("Marble"))
+        return "#e8e5df";
+
+    if(wall.includes("Wood"))
+        return "#d4b08a";
+
+    if(wall.includes("Yellow"))
+        return "#f5df9d";
+
+    return "#e5e5e5";
+
+}
+
+
+/* =================================================
+   ROOM NAME
+================================================= */
+
+function getRoomName(room){
+
+    const names = {
+
+        living:"Living Room",
+        bedroom:"Bedroom",
+        kitchen:"Kitchen",
+        bathroom:"Bathroom",
+        dining:"Dining Room",
+        balcony:"Balcony",
+        pooja:"Pooja Room",
+        office:"Home Office"
+
+    };
+
+    return names[room];
+
+}
+
+
+/* =================================================
+   STYLE NAME
+================================================= */
+
+function getStyleName(style){
+
+    const names = {
+
+        modern:"Modern",
+        traditional:"Traditional",
+        minimal:"Minimal",
+        luxury:"Luxury",
+        indian:"Indian Traditional"
+
+    };
+
+    return names[style];
+
+}
+
+</script>
+
+</body>
+</html>
